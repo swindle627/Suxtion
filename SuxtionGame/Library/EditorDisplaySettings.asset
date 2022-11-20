@@ -28,14 +28,14 @@ MonoBehaviour:
   - m_name: Simulate Standalone
     m_settings:
     - displayName: Generic PnP Monitor
-      displayId: 2078362992
+      displayId: -286658772
       enabled: 1
       mode: 0
       viewWindowTitle: Game
       playModeViewSettings:
         rid: 3544533199243968512
     - displayName: Generic PnP Monitor
-      displayId: -286658772
+      displayId: -1711742749
       enabled: 1
       mode: 0
       viewWindowTitle: Game
@@ -52,7 +52,7 @@ MonoBehaviour:
     displayName: Main Display
     displayId: 1
     enabled: 1
-    mode: 1
+    mode: 0
     viewWindowTitle: Game
     playModeViewSettings:
       rid: 3544533199243968530
