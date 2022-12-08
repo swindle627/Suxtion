@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    // when game ends just turn off the player script and all enemy scripts
+
     public float upgradePoints;
 
     // Start is called before the first frame update
