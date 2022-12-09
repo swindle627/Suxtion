@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
-    //public enum Test { a, b, c }
-    //public Test testing;
     [Header("Suction setup")]
     [SerializeField] private float xSuctionSpeed;
     [SerializeField] private float ySuctionSpeed;
@@ -18,15 +16,12 @@ public class playerController : MonoBehaviour
     public float healthPackValue;
     public float healthPackTimer;
 
-    // used by UpgradeShop to set expel range
-    // used by PlayerProjectile to get expelRange
-    // works by timer in PlayerProjectile
-
     [Header("Things for testing purposes")]
     public float health  = 100;
     public float pierceCount, expelRange, suctionRange, speed;
     public bool isPaused;
-    public GameObject one, two, three;
+    public GameObject shot, healthPack, enemy1;
+    public Transform spawn1, spawn2, spawn3, spawn4;
 
     private Camera cam;
     private GameObject suction;
@@ -63,11 +58,19 @@ public class playerController : MonoBehaviour
             AddHealth();
         }
 
-        if(Input.GetKeyDown(KeyCode.Alpha3))
+        // testing purposes
+        if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Instantiate(one);
-            Instantiate(two);
-            Instantiate(three);
+            Instantiate(shot, spawn1.position, spawn1.rotation);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Instantiate(healthPack, spawn2.position, spawn2.rotation);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Instantiate(enemy1, spawn3.position, spawn3.rotation);
+            Instantiate(enemy1, spawn4.position, spawn4.rotation);
         }
     }
     // Player movement
@@ -131,7 +134,27 @@ public class playerController : MonoBehaviour
         {
             // Uses Resources.Load to instantiate objects
             string projectile = inventory.Remove();
-            Instantiate(Resources.Load(projectile), expelPoint.position, expelPoint.rotation);
+
+            if(projectile.Contains("Enemy"))
+            {
+                // color and enemy health data begin after the slash
+                int dataIndex = projectile.IndexOf("/");
+
+                // color starts at the first index after the slash
+                int color = int.Parse(projectile.Substring(dataIndex + 1)); 
+
+                // creates a substring of the data section and deletes it from the string
+                string deleteSection = projectile.Substring(dataIndex);
+                projectile = projectile.Replace(deleteSection, "");
+
+                // spawns exepelled enemy projectile and sets it up
+                GameObject enemy = (GameObject)Instantiate(Resources.Load(projectile), expelPoint.position, expelPoint.rotation);
+                enemy.GetComponent<EnemyScript>().Setup(color);
+            }
+            else
+            {
+                Instantiate(Resources.Load(projectile), expelPoint.position, expelPoint.rotation);
+            }
         }
         else if(Input.GetKeyDown(KeyCode.Mouse1))
         {

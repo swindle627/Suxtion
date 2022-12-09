@@ -13,7 +13,7 @@ public class StoreObject : MonoBehaviour
     // Adds objects to inventory when they collide with the suction point
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Suckable")
+        if (other.gameObject.tag == "Suckable" || other.gameObject.tag == "Enemy")
         {
             inventory.Add(other.gameObject);
         }

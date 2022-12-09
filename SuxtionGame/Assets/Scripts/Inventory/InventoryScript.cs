@@ -53,13 +53,19 @@ public class InventoryScript : MonoBehaviour
     // Adds object to inventory by storing its name
     public void Add(GameObject obj)
     {
-        inventory.Push(obj.name.Replace("(Clone)", ""));
+        string name = obj.name.Replace("(Clone)", "");
 
-        if(inventory.Peek() == "Health")
+        if (name == "Health")
         {
             healthCounter++;
-            Debug.Log("Health Count: " + healthCounter);
         }
+        else if (obj.tag == "Enemy")
+        {
+            // playerController uses the slash to see where the color data begins
+            name += "/" + (int)obj.GetComponent<EnemyScript>().eColors;
+        }
+
+        inventory.Push(name);
 
         Destroy(obj);
         //Debug.Log("Stored " + inventory.Peek() + ". " + (currentSize - inventory.Count) + " slots free");

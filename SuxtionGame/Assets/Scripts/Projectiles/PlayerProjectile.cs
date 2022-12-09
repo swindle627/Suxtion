@@ -5,17 +5,19 @@ using UnityEngine;
 public class PlayerProjectile : MonoBehaviour
 {
     private float speed = 15;
-    public float damage;
     private float range;
     private float pointValue = 100;
     private float pierce;
     private float timer = 0;
+    private GameManager gameManager;
 
     private void Start()
     {
         playerController pc = FindObjectOfType<playerController>();
         range = pc.expelRange;
         pierce = pc.pierceCount;
+
+        gameManager = FindObjectOfType<GameManager>();
     }
     private void Update()
     {
@@ -32,10 +34,8 @@ public class PlayerProjectile : MonoBehaviour
     {
         if(other.tag == "Enemy")
         {
-            Debug.Log("Dealt " + damage + " damage.");
-            // get enemy current health
-            // deal damage to enemy
-            // if current health - damage is less than zero add pointValue to GameManager
+            Destroy(other.gameObject);
+            gameManager.upgradePoints += gameManager.basicKillValue;
 
             pierce--;
 
