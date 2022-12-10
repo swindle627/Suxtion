@@ -1,14 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class playerController : MonoBehaviour
 {
-    [Header("Suction setup")]
-    [SerializeField] private float xSuctionSpeed;
-    [SerializeField] private float ySuctionSpeed;
-    [SerializeField] private float zSuctionSpeed;
-
     [Header("Expel setup")]
     [SerializeField] private Transform expelPoint;
 
@@ -16,40 +12,34 @@ public class playerController : MonoBehaviour
     public float healthPackValue;
     public float healthPackTimer;
 
-    [Header("Things for testing purposes")]
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI healthText;
+
+    [Header("Player Stats")]
     public float health  = 100;
-    public float pierceCount, expelRange, suctionRange, speed;
-    public bool isPaused;
-    public GameObject shot, healthPack, enemy1;
-    public Transform spawn1, spawn2, spawn3, spawn4;
+    public float pierceCount, expelRange, suctionSpeed, speed;
 
     private Camera cam;
     private GameObject suction;
     private InventoryScript inventory;
     private float healthTime = 0;
+    private bool isPaused = false;
+    private GameManager gameManager;
+    private float enemyDamage = 5;
 
     // Start is called before the first frame update
     void Start()
     {
-        isPaused = false;
         cam = FindObjectOfType<Camera>();
         suction = FindObjectOfType<SuctionScript>().gameObject;
         inventory = gameObject.GetComponent<InventoryScript>();
-
-        suction.GetComponent<SuctionScript>().SetSuctionSpeed(xSuctionSpeed, ySuctionSpeed, zSuctionSpeed);
-
-        // remove this stuff later
-        inventory.SetSize(3);
+        gameManager = FindObjectOfType<GameManager>();
     }
     private void Update()
     {
-        // handle this in game manager later
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            isPaused = !isPaused;
-        }
+        isPaused = gameManager.GetPause();
 
-        if (!isPaused)
+        if(!isPaused)
         {
             MovementGlobalForward();
             LookAtPosition();
@@ -58,19 +48,20 @@ public class playerController : MonoBehaviour
             AddHealth();
         }
 
-        // testing purposes
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        healthText.text = health.ToString();
+
+        if(gameManager.GetLevel() == 2)
         {
-            Instantiate(shot, spawn1.position, spawn1.rotation);
+            enemyDamage = 10;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if(gameManager.GetLevel() == 3)
         {
-            Instantiate(healthPack, spawn2.position, spawn2.rotation);
+            enemyDamage = 15;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+
+        if(health <= 0)
         {
-            Instantiate(enemy1, spawn3.position, spawn3.rotation);
-            Instantiate(enemy1, spawn4.position, spawn4.rotation);
+            gameManager.EndGame();
         }
     }
     // Player movement
@@ -170,7 +161,7 @@ public class playerController : MonoBehaviour
         {
             float healthIncrease = health + healthPackValue * inventory.GetHealthCount();
 
-            Debug.Log(healthPackValue * inventory.GetHealthCount() + " health added.");
+            //Debug.Log(healthPackValue * inventory.GetHealthCount() + " health added.");
 
             if(healthIncrease > 100)
             {
@@ -188,32 +179,17 @@ public class playerController : MonoBehaviour
             healthTime += Time.deltaTime;
         }
     }
-
-
-    // Methods below primarily used by UpgradeShop
-    // used to set pierce count
-    public void SetPierceCount(float count)
+    // used by game manager to pause player actions
+    public void PauseManager(bool isPaused)
     {
-        pierceCount = count;
+        this.isPaused = isPaused;
     }
-    // used to set suction range
-    public void SetSuctionRange(float range)
+    private void OnTriggerEnter(Collider other)
     {
-        suctionRange = range;
-    }
-    // used to set player speed
-    public void SetSpeed(float speed)
-    {
-        this.speed = speed;
-    }
-    // used to set player health
-    public void SetHealth(float health)
-    {
-        this.health = health;
-    }
-    // used to get player health
-    public void GetHealth(float health)
-    {
-        this.health = health;
+        if(other.tag == "Enemy Projectile")
+        {
+            health -= enemyDamage;
+            Destroy(other.gameObject);
+        }
     }
 }

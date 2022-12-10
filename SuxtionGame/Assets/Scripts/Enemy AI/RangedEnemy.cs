@@ -12,13 +12,15 @@ public class RangedEnemy : EnemyScript
     private MeshRenderer meshRenderer;
     private int state;
     private float distance; // distance from player
-    private float backUpTimer = 0, chaseTimer = 0;
-    private bool isBacking = false, canAttack = true;
+    private float backUpTimer = 0, projectileTimer = 0;
+    private bool isBacking = false, fireProjectile = true;
     private float moveSpeed = 3;
+    private GameManager gameManager;
 
     void Start()
     {
         player = FindObjectOfType<playerController>().gameObject;
+        gameManager = FindObjectOfType<GameManager>();
 
         if(eColors == EnemyColors.blank)
         {
@@ -33,6 +35,26 @@ public class RangedEnemy : EnemyScript
         meshRenderer.material = enemyMaterials[(int)eColors];
         ChangeState();
         RunStates();
+
+        if(!fireProjectile && projectileTimer < 1)
+        {
+            projectileTimer += Time.deltaTime;
+        }
+        else
+        {
+            projectileTimer = 0;
+            fireProjectile = true;
+        }
+
+        // make enemies faster as game goes on
+        if(gameManager.GetLevel() == 2)
+        {
+            moveSpeed = 6;
+        }
+        else if(gameManager.GetLevel() == 3)
+        {
+            moveSpeed = 8;
+        }
     }
     private void ChangeState()
     {
@@ -62,35 +84,23 @@ public class RangedEnemy : EnemyScript
     {
         if(state == 0)
         {
+            transform.LookAt(player.transform);
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, moveSpeed * Time.deltaTime);
-            temp = "Moving to player";
         }
         else if(state == 1)
         {
-            // enemy will stay still and fire at the player. 
-            temp = "Staying still and firing";
+            // enemy will stay still and fire at the player.
+            transform.LookAt(player.transform);
+            if (fireProjectile)
+            {
+                Instantiate(Resources.Load("Projectile"), transform.position, transform.rotation);
+                fireProjectile = false;
+            }
         }
         else if(state == 2)
         {
             // when the enemy is too close to the player they will wait 1.5 seconds before backing up
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, -moveSpeed * Time.deltaTime);
-            temp = "Moving away from player";
-        }
-    }
-
-    // Enemy won't attack while being sucked up and will resume attacking when it is not being sucked up
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.tag == "Suction Range")
-        {
-            canAttack = false;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.tag == "Suction Range")
-        {
-            canAttack = true;
         }
     }
 }

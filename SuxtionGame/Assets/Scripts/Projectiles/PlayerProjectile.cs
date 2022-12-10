@@ -6,7 +6,6 @@ public class PlayerProjectile : MonoBehaviour
 {
     private float speed = 15;
     private float range;
-    private float pointValue = 100;
     private float pierce;
     private float timer = 0;
     private GameManager gameManager;
@@ -36,6 +35,7 @@ public class PlayerProjectile : MonoBehaviour
         {
             Destroy(other.gameObject);
             gameManager.upgradePoints += gameManager.basicKillValue;
+            gameManager.KillPoints();
 
             pierce--;
 

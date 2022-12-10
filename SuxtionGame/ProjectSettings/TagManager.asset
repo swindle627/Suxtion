@@ -7,6 +7,7 @@ TagManager:
   - Suckable
   - Projectile
   - Enemy
+  - Suction Range
   layers:
   - Default
   - TransparentFX
@@ -15,8 +16,8 @@ TagManager:
   - Water
   - UI
   - Non-enemy Suckable
-  - 
-  - 
+  - Enemy Projectile
+  - Enemy
   - 
   - 
   - 

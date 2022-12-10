@@ -5,17 +5,19 @@ using UnityEngine;
 public class SuctionScript : MonoBehaviour
 {
     private GameObject suctionPoint;
+    private playerController player;
     private float xSpeed, ySpeed, zSpeed;
 
     private void Start()
     {
         suctionPoint = FindObjectOfType<StoreObject>().gameObject;
+        player = FindObjectOfType<playerController>();
     }
-    public void SetSuctionSpeed(float x, float y, float z)
+    private void Update()
     {
-        xSpeed = x;
-        ySpeed = y;
-        zSpeed = z;
+        xSpeed = player.suctionSpeed;
+        zSpeed = player.suctionSpeed;
+        ySpeed = 1;
     }
     // When objects are in range they get attracted to the suction point
     private void OnTriggerStay(Collider other)
@@ -26,7 +28,7 @@ public class SuctionScript : MonoBehaviour
             Vector3 objTransform = other.transform.position;
             objTransform.x = Vector3.MoveTowards(objTransform, suctionPoint.transform.position, xSpeed).x;
             objTransform.y = Vector3.MoveTowards(objTransform, suctionPoint.transform.position, ySpeed).y;
-            objTransform.z = Vector3.MoveTowards(objTransform, suctionPoint.transform.position, xSpeed).z;
+            objTransform.z = Vector3.MoveTowards(objTransform, suctionPoint.transform.position, zSpeed).z;
             other.transform.position = objTransform;
         }
     }

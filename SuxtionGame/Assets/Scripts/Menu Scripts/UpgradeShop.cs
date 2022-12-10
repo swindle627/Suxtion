@@ -15,7 +15,7 @@ public class UpgradeShop : MonoBehaviour
 
     // Shop sections
     [Header("Shop Sections")]
-    [SerializeField] private GameObject suctionRange;
+    [SerializeField] private GameObject suctionSpeed;
     [SerializeField] private GameObject inventory;
     [SerializeField] private GameObject expelRange;
     [SerializeField] private GameObject speed;
@@ -85,7 +85,7 @@ public class UpgradeShop : MonoBehaviour
     }
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             shopIsActive = !shopIsActive;
         }
@@ -116,10 +116,10 @@ public class UpgradeShop : MonoBehaviour
         suctionUpgrades[1] = suctionLevel2;
         suctionUpgrades[2] = suctionLevel3;
         suctionUpgrades[3] = suctionLevel4;
-        suctionButtons[0] = suctionRange.transform.GetChild(0).GetComponent<Button>();
-        suctionButtons[1] = suctionRange.transform.GetChild(1).GetComponent<Button>();
-        suctionButtons[2] = suctionRange.transform.GetChild(2).GetComponent<Button>();
-        suctionButtons[3] = suctionRange.transform.GetChild(3).GetComponent<Button>();
+        suctionButtons[0] = suctionSpeed.transform.GetChild(0).GetComponent<Button>();
+        suctionButtons[1] = suctionSpeed.transform.GetChild(1).GetComponent<Button>();
+        suctionButtons[2] = suctionSpeed.transform.GetChild(2).GetComponent<Button>();
+        suctionButtons[3] = suctionSpeed.transform.GetChild(3).GetComponent<Button>();
 
         inventoryUpgrades[0] = inventoryLevel1;
         inventoryUpgrades[1] = inventoryLevel2;
@@ -160,18 +160,18 @@ public class UpgradeShop : MonoBehaviour
     // sending initial values to player controller
     private void SetInitialValues()
     {
-        player.SetSuctionRange(suctionUpgrades[0]);
+        player.suctionSpeed = suctionUpgrades[0];
         invenScript.SetSize(inventoryUpgrades[0]);
         player.expelRange = expelUpgrades[0];
-        player.SetPierceCount(pierceUpgrades[0]);
-        player.SetSpeed(speedUpgrades[0]);
+        player.pierceCount = pierceUpgrades[0];
+        player.speed = speedUpgrades[0];
     }
     // checks to see if player has enough upgrade points before upgrading
     // if they do it subtracts the necessary points from upgrade points
     // this method is call first by all upgrade buttons
     public void CheckUpgradePoints(float cost)
     {
-        if(gameManager.upgradePoints > cost)
+        if(gameManager.upgradePoints >= cost)
         {
             gameManager.upgradePoints -= cost;
             doUpgrade = true;
@@ -186,7 +186,7 @@ public class UpgradeShop : MonoBehaviour
     {
         if(doUpgrade)
         {
-            player.SetSuctionRange(suctionUpgrades[level]);
+            player.suctionSpeed = suctionUpgrades[level];
             suctionButtons[level].interactable = false;
             doUpgrade = false;
         }
@@ -216,7 +216,7 @@ public class UpgradeShop : MonoBehaviour
     {
         if (doUpgrade)
         {
-            player.SetPierceCount(pierceUpgrades[level]);
+            player.pierceCount = pierceUpgrades[level];
             piercingButtons[level].interactable = false;
             doUpgrade = false;
         }
@@ -226,7 +226,7 @@ public class UpgradeShop : MonoBehaviour
     {
         if (doUpgrade)
         {
-            player.SetSpeed(speedUpgrades[level]);
+            player.speed = speedUpgrades[level];
             speedButtons[level].interactable = false;
             doUpgrade = false;
         }
@@ -239,6 +239,7 @@ public class UpgradeShop : MonoBehaviour
             player.health += healthAdded;
             refillPenalty += healthAdded;
             refillMultiplier++;
+            gameManager.refillPenalty = refillPenalty * refillMultiplier;
         }
     }
 }

@@ -46,12 +46,17 @@ public class ExpelledEnemy : EnemyScript
             if(eColors != other.GetComponent<EnemyScript>().eColors) // non-color match kill
             {
                 gameManager.upgradePoints += gameManager.enemyKillValue;
+                gameManager.KillPoints();
+                gameManager.KillPoints();
                 Destroy(other.gameObject);
                 Destroy(gameObject);
             }
             else // color match kill
             {
                 gameManager.upgradePoints += gameManager.colorKillValue;
+                gameManager.KillPoints();
+                gameManager.KillPoints();
+                gameManager.ColorMatchPoints();
                 Collider[] enemies = other.GetComponent<EnemyScript>().Explode();
 
                 foreach(Collider enemy in enemies)
@@ -59,6 +64,8 @@ public class ExpelledEnemy : EnemyScript
                     if(enemy.tag == "Enemy" && enemy.gameObject != other.gameObject)
                     {
                         gameManager.upgradePoints += gameManager.basicKillValue;
+                        gameManager.KillPoints();
+                        gameManager.AreaPoints();
                         Destroy(enemy.gameObject);
                     }
                 }
